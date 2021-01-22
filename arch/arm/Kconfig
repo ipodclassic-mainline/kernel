@@ -517,6 +517,15 @@ config ARCH_S3C24XX
 	  (<http://www.simtec.co.uk/products/EB110ITX/>), the IPAQ 1940 or the
 	  Samsung SMDK2410 development board (and derivatives).
 
+config SOC_S5L8XXX
+	bool "Samsung S5L87xxx SoCs"
+	select GENERIC_CLOCKEVENTS
+	select GPIOLIB
+	select GENERIC_IRQ_MULTI_HANDLER
+	select USE_OF
+	help
+	  Samsung S5L8702 based systems, such as the iPod classic (6th gen).
+
 config ARCH_OMAP1
 	bool "TI OMAP1"
 	depends on MMU
@@ -712,6 +721,8 @@ source "arch/arm/mach-realview/Kconfig"
 source "arch/arm/mach-rockchip/Kconfig"
 
 source "arch/arm/mach-s3c/Kconfig"
+
+source "arch/arm/mach-s5l/Kconfig"
 
 source "arch/arm/mach-s5pv210/Kconfig"
 

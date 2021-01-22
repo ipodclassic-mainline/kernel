@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copyright 2009 Simtec Electronics
+
+config SOC_S5L8702
+	bool "S5L8702 SoC used by Apple iPod classic (6th gen)"
+	depends on SOC_S5L8XXX
+	default 0
+	help
+	  Select this if you want to the support the S5L8702 SoC,
+	  using an ARM926T core. This SoC is used in several multimedia
+	  players including the iPod classic.

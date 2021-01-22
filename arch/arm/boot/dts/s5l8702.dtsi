@@ -1,0 +1,111 @@
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+
+/memreserve/ 0x00000000 0x8000000;
+
+/ {
+	compatible = "samsung,s5l8702";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	memory@8000000 {
+		device_type = "memory";
+		// DRAM, IRAM
+		reg = <0x08000000 0x00100000 
+			   0x22000000 0x40000>;
+	};
+
+	aliases {
+	};
+
+	// rmem: reserved-memory {
+		
+	// 	reserved0: memory@0x30000000 {
+	// 		reg = <0 0x30000000 0 0x8000000>;
+	// 		no-map;
+	// 	};
+	// };
+
+	ahb {
+		compatible = "simple-bus";
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		sysc: system-controller@3c500000 {
+			compatible = "samsung,s5l8702-system-controller";
+			reg = <0x3C500000 0x100>;
+		};
+
+		system_timer: timer@3c700000 {
+			compatible = "samsung,s5l8702-system-timer";
+			reg = <0x3C700000 0x1000>;
+			interrupt-parent = <&vic0>;
+			interrupts = <1>;
+		};
+
+		vic0: interrupt-controller@38e00000 {
+			compatible = "arm,pl190-vic";
+			reg = <0x38e00000 0x1000>;
+
+			interrupt-controller;
+			#interrupt-cells = <1>;
+		};
+
+		vic1: interrupt-controller@38e01000 {
+			compatible = "arm,pl190-vic";
+			reg = <0x38e01000 0x1000>;
+
+			interrupt-controller;
+			#interrupt-cells = <1>;
+		};
+
+		// The clock registers are adjacent to some other
+		// misc registers
+		pll_clocks: clock-controller@3c500000 {
+			compatible = "samsung,s5l8702-pll";
+			reg = <0x3C500000 0x44>;
+			#clock-cells = <1>;
+			clocks = <&osc0>, <&osc1>;
+			clock-names = "osc0", "osc1";
+		};
+
+		/*
+		 * Power controller includes the power / reset
+		 * state and controls.
+		 */
+		pwrctrl: power-controller@3C500048 {
+			compatible = "samsung,s5l8702-power";
+			reg = <0x3C500048 0x24>;
+		};
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			compatible = "arm,arm926ej-s";
+			device_type = "cpu";
+			reg = <0x0>;
+		};
+	};
+
+	clocks {
+		osc0: clk-osc0 {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+
+			clock-output-names = "osc0";
+			clock-frequency = <12000000>;
+		};
+		
+		osc1: clk-osc1 {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+
+			clock-output-names = "osc1";
+			clock-frequency = <32768>;
+		};
+	};
+};
