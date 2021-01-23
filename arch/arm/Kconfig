@@ -519,10 +519,15 @@ config ARCH_S3C24XX
 
 config SOC_S5L8XXX
 	bool "Samsung S5L87xxx SoCs"
-	select GENERIC_CLOCKEVENTS
+	# select GENERIC_CLOCKEVENTS
 	select GPIOLIB
-	select GENERIC_IRQ_MULTI_HANDLER
 	select USE_OF
+	select CPU_ARM926T
+	select ARM_VIC
+	select GENERIC_CLOCKEVENTS
+	select GENERIC_IRQ_MULTI_HANDLER
+	select MAY_HAVE_SPARSE_IRQ
+	select SPARSE_IRQ
 	help
 	  Samsung S5L8702 based systems, such as the iPod classic (6th gen).
 

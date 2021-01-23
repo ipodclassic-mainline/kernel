@@ -7,6 +7,6 @@
 #ifndef __ASM_ARCH_IRQS_H
 #define __ASM_ARCH_IRQS_H __FILE__
 
-#define NR_IRQS			256
+#define NR_IRQS			96
 
 #endif /* __ASM_ARCH_IRQ_H */

@@ -4,9 +4,16 @@
 
 config SOC_S5L8702
 	bool "S5L8702 SoC used by Apple iPod classic (6th gen)"
-	depends on SOC_S5L8XXX
+	# depends on SOC_S5L8XXX
+	select MACH_S5L8702
 	default 0
 	help
 	  Select this if you want to the support the S5L8702 SoC,
 	  using an ARM926T core. This SoC is used in several multimedia
 	  players including the iPod classic.
+
+config MACH_S5L8702
+	def_bool y
+	depends on SOC_S5L8702
+	help
+	  Supports Samsung S5L8702 boards configured via the device-tree
