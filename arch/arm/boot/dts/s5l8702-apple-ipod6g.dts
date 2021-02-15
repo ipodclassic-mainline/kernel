@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Samsung's S5L8702 based Apple iPod classic (6th Gen) device tree source
+ *
+ * Copyright 2020 Caleb Connolly <caleb@connolly.tech>
+ */
+
+/dts-v1/;
+
+#include "s5l8702.dtsi"
+
+/ {
+	model = "Apple iPod classic (6th Gen)";
+	compatible = "apple,ipod6g", "samsung,s5l8702";
+
+    soc {
+    };
+}; 

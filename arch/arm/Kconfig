@@ -687,6 +687,8 @@ source "arch/arm/mach-rockchip/Kconfig"
 
 source "arch/arm/mach-s3c/Kconfig"
 
+source "arch/arm/mach-s5l/Kconfig"
+
 source "arch/arm/mach-s5pv210/Kconfig"
 
 source "arch/arm/mach-sa1100/Kconfig"
