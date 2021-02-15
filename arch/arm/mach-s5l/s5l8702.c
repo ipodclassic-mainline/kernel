@@ -38,6 +38,6 @@ static const char * const s5l8702_dt_compat[] = {
 DT_MACHINE_START(S5L8702, "Samsung s5l8702 (iPod Classic) FDT")
 	.init_machine	= s5l8702_dt_init,
 	.map_io = s5l8702_map_io,
-	//.init_irq = irqchip_init,
+	.init_irq = irqchip_init,
 	.dt_compat = s5l8702_dt_compat,
 MACHINE_END
