@@ -376,5 +376,36 @@
 #define UART_ALTR_EN_TXFIFO_LW	0x01	/* Enable the TX FIFO Low Watermark */
 #define UART_ALTR_TX_LOW	0x41	/* Tx FIFO Low Watermark */
 
+/* UC870x UART found in S5L8702 (iPod Classic) SoC
+*/
+
+// #define UC870X_LINE_CONTROL 	0x00
+// #define UC870X_CONTROL			0x04
+// #define UC870X_FIFO_CONTROL		0x08
+// #define UC870X_MODEM_CONTROL	0x0C
+#define UC870X_STAT				0x10
+#define UC870X_TXDATA			0x20
+//#define UX870X_
+
+// #define ULCON(ba)       (*((REG32_PTR_T)((ba) + 0x00))) /* line control */
+// #define UCON(ba)        (*((REG32_PTR_T)((ba) + 0x04))) /* control */
+// #define UFCON(ba)       (*((REG32_PTR_T)((ba) + 0x08))) /* FIFO control */
+// #define UMCON(ba)       (*((REG32_PTR_T)((ba) + 0x0C))) /* modem control */
+// #define UTRSTAT(ba)     (*((REG32_PTR_T)((ba) + 0x10))) /* Tx/Rx status */
+// #define UERSTAT(ba)     (*((REG32_PTR_T)((ba) + 0x14))) /* Rx error status */
+// #define UFSTAT(ba)      (*((REG32_PTR_T)((ba) + 0x18))) /* FIFO status */
+// #define UMSTAT(ba)      (*((REG32_PTR_T)((ba) + 0x1C))) /* modem status */
+// #define UTXH(ba)        (*((REG32_PTR_T)((ba) + 0x20))) /* transmission hold */
+// #define URXH(ba)        (*((REG32_PTR_T)((ba) + 0x24))) /* receive buffer */
+// #define UBRDIV(ba)      (*((REG32_PTR_T)((ba) + 0x28))) /* baud rate divisor */
+// #if CONFIG_CPU != S5L8700
+// #define UABRCNT(ba)     (*((REG32_PTR_T)((ba) + 0x2c))) /* autobaud counter */
+// #define UABRSTAT(ba)    (*((REG32_PTR_T)((ba) + 0x30))) /* autobaud status */
+// #endif
+// #if CONFIG_CPU == S5L8702
+// #define UBRCONTX(ba)    (*((REG32_PTR_T)((ba) + 0x34))) /* Tx frame config */
+// #define UBRCONRX(ba)    (*((REG32_PTR_T)((ba) + 0x38))) /* Rx frame config */
+// #endif
+
 #endif /* _LINUX_SERIAL_REG_H */
 

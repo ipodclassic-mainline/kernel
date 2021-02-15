@@ -1069,6 +1069,19 @@ choice
 		  Say Y here if you want the debug print routines to direct
 		  their output to UART 2. The port must have been initialised
 		  by the boot-loader before use.
+	
+	config DEBUG_S5L_UART
+		bool "Kernel log-level debugging on Apple iPod classic"
+		depends on ARCH_S5L
+		help
+		  Say Y here if you want the debug print routines to direct
+		  their output to the serial port on Qualcomm devices.
+
+		  ARCH      DEBUG_UART_PHYS   DEBUG_UART_VIRT
+		  S5L8702   0x3CC00000        0xFCC00000
+
+		  Please adjust DEBUG_UART_PHYS and DEBUG_UART_BASE configuration
+		  options based on your needs.
 
 	config DEBUG_SA1100
 		depends on ARCH_SA1100
@@ -1549,6 +1562,7 @@ config DEBUG_LL_INCLUDE
 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA1
 	default "debug/renesas-scif.S" if DEBUG_RMOBILE_SCIFA4
 	default "debug/s3c24xx.S" if DEBUG_S3C24XX_UART || DEBUG_S3C64XX_UART
+	default "debug/uc870x.S" if DEBUG_S5L_UART
 	default "debug/s5pv210.S" if DEBUG_S5PV210_UART
 	default "debug/sti.S" if DEBUG_STIH41X_ASC2
 	default "debug/sti.S" if DEBUG_STIH41X_SBC_ASC1
@@ -1637,6 +1651,7 @@ config DEBUG_UART_PHYS
 				DEBUG_S3C2410_UART1)
 	default 0x50008000 if DEBUG_S3C24XX_UART && (DEBUG_S3C_UART2 || \
 				DEBUG_S3C2410_UART2)
+	default 0x3CC00000 if DEBUG_S5L_UART
 	default 0x78000000 if DEBUG_CNS3XXX
 	default 0x7c0003f8 if DEBUG_FOOTBRIDGE_COM1
 	default 0x7f005000 if DEBUG_S3C64XX_UART && DEBUG_S3C_UART0
@@ -1705,7 +1720,7 @@ config DEBUG_UART_PHYS
 		DEBUG_RCAR_GEN2_SCIFA2 || \
 		DEBUG_RMOBILE_SCIFA0 || DEBUG_RMOBILE_SCIFA1 || \
 		DEBUG_RMOBILE_SCIFA4 || DEBUG_S3C24XX_UART || \
-		DEBUG_S3C64XX_UART || \
+		DEBUG_S3C64XX_UART || DEBUG_S5L_UART || \
 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
 		DEBUG_DIGICOLOR_UA0 || \
 		DEBUG_AT91_UART || DEBUG_STM32_UART || \
@@ -1748,6 +1763,7 @@ config DEBUG_UART_VIRT
 				DEBUG_S3C2410_UART1)
 	default 0xf7008000 if DEBUG_S3C24XX_UART && (DEBUG_S3C_UART2 || \
 				DEBUG_S3C2410_UART2)
+	default 0xFCC00000 if DEBUG_S5L_UART
 	default 0xf7020000 if DEBUG_AT91_SAMA5D2_UART1
 	default 0xf7fc9000 if DEBUG_BERLIN_UART
 	default 0xf8007000 if DEBUG_HIP04_UART
@@ -1814,7 +1830,7 @@ config DEBUG_UART_VIRT
 	depends on DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
 		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_MESON_UARTAO || \
 		DEBUG_QCOM_UARTDM || DEBUG_S3C24XX_UART || \
-		DEBUG_S3C64XX_UART || \
+		DEBUG_S3C64XX_UART || DEBUG_S5L_UART || \
 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
 		DEBUG_DIGICOLOR_UA0 || \
 		DEBUG_AT91_UART || DEBUG_STM32_UART || \

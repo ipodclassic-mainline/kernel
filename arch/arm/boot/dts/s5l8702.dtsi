@@ -1,0 +1,88 @@
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+
+/memreserve/ 0x00000000 0x8000000;
+
+/ {
+	compatible = "samsung,s5l8702";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	memory@8000000 {
+		device_type = "memory";
+		// DRAM, IRAM     0x108000
+		reg = <0x08000000 0x4000000
+			   0x22000000 0x40000>;
+	};
+
+	aliases {
+	};
+
+	reserved-memory {
+
+		// reserved0: memory@0x30000000 {
+		// 	reg = <0 0x30000000 0 0x8000000>;
+		// 	no-map;
+		// };
+	};
+
+	ahb {
+		compatible = "simple-bus";
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		vic0: interrupt-controller@38e00000 {
+			compatible = "arm,pl190-vic";
+			reg = <0x38E00F00 0x1000>;
+
+			interrupt-controller;
+			#interrupt-cells = <1>;
+		};
+
+		vic1: interrupt-controller@38e01000 {
+			compatible = "arm,pl190-vic";
+			reg = <0x38E01F00 0x1000>;
+
+			interrupt-controller;
+			#interrupt-cells = <1>;
+		};
+
+		// timer@3c700000 {
+		// 	compatible = "samsung,s5l8702-timer";
+		// 	reg = <0x3C700000 0x200>;
+
+		// 	interrupts = <&vic0 7 IRQ_EDGE_RISING>; // INT_TIMER32 is the actual interrupt, TIMERF is the one used for rockbox.
+		// 	clock-frequency = <12000000>;
+		// };
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			compatible = "arm,arm926ej-s";
+			device_type = "cpu";
+			reg = <0x0>;
+		};
+	};
+
+	clocks {
+		osc0: clk-osc0 {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+
+			clock-output-names = "osc0";
+			clock-frequency = <12000000>;
+		};
+
+		osc1: clk-osc1 {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+
+			clock-output-names = "osc1";
+			clock-frequency = <32768>;
+		};
+	};
+};
