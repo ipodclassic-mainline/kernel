@@ -1344,8 +1344,10 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
 	 */
 	vectors = early_alloc(PAGE_SIZE * 2);
 
+	early_print("early_trap_init(%x)\n", (unsigned)&vectors);
 	early_trap_init(vectors);
 
+	early_print("clear page tables\n");
 	/*
 	 * Clear page table except top pmd used by early fixmaps
 	 */
@@ -1353,6 +1355,7 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
 		pmd_clear(pmd_off_k(addr));
 
 	if (__atags_pointer) {
+		early_print("Create a read-only mapping of the device tree\n");
 		/* create a read-only mapping of the device tree */
 		map.pfn = __phys_to_pfn(__atags_pointer & SECTION_MASK);
 		map.virtual = FDT_FIXED_BASE;
@@ -1404,15 +1407,17 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
 #else
 	map.type = MT_LOW_VECTORS;
 #endif
+	early_print("Mapping machine vectors\n");
 	create_mapping(&map);
 
 	if (!vectors_high()) {
+		early_print("!vectors_high()\n");
 		map.virtual = 0;
 		map.length = PAGE_SIZE * 2;
 		map.type = MT_LOW_VECTORS;
 		create_mapping(&map);
 	}
-
+	early_print("Create kernel read-only mapping\n");
 	/* Now create a kernel read-only mapping */
 	map.pfn += 1;
 	map.virtual = 0xffff0000 + PAGE_SIZE;
@@ -1420,6 +1425,7 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
 	map.type = MT_LOW_VECTORS;
 	create_mapping(&map);
 
+	early_print("Map machine IO\n");
 	/*
 	 * Ask the machine support to map in the statically mapped devices.
 	 */
@@ -1427,11 +1433,13 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
 		mdesc->map_io();
 	else
 		debug_ll_io_init();
+	early_print("fill_pmd_gaps()\n");
 	fill_pmd_gaps();
 
 	/* Reserve fixed i/o space in VMALLOC region */
 	pci_reserve_io();
 
+	early_print("local_flush_tlb_all() - flush caches and tlb\n");
 	/*
 	 * Finally flush the caches and tlb to ensure that we're in a
 	 * consistent state wrt the writebuffer.  This also ensures that
@@ -1442,6 +1450,7 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
 	flush_cache_all();
 
 	/* Enable asynchronous aborts */
+	early_print("early_abt_enable() - enable async aborts\n");
 	early_abt_enable();
 }
 
@@ -1646,12 +1655,19 @@ void __init paging_init(const struct machine_desc *mdesc)
 {
 	void *zero_page;
 
+	early_print("prepare_page_table()\n");
 	prepare_page_table();
+	early_print("map_lowmem()\n");
 	map_lowmem();
+	early_print("memblock_set_current_limit(%x)\n", arm_lowmem_limit);
 	memblock_set_current_limit(arm_lowmem_limit);
+	early_print("dma_contiguous_remap()\n");
 	dma_contiguous_remap();
+	early_print("early_fixmap_shutdown()\n");
 	early_fixmap_shutdown();
+	early_print("devicemaps_init()\n");
 	devicemaps_init(mdesc);
+	early_print("kmap_init()\n");
 	kmap_init();
 	tcm_init();
 

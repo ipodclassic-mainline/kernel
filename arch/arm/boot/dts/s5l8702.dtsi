@@ -1,8 +1,6 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/interrupt-controller/irq.h>
 
-/memreserve/ 0x00000000 0x8000000;
-
 / {
 	compatible = "samsung,s5l8702";
 	#address-cells = <1>;
@@ -11,20 +9,20 @@
 	memory@8000000 {
 		device_type = "memory";
 		// DRAM, IRAM     0x108000
-		reg = <0x08000000 0x4000000
-			   0x22000000 0x40000>;
+		reg = <0x08000000 0x4000000>;
+//			   0x22000000 0x40000>;
 	};
 
 	aliases {
 	};
 
-	reserved-memory {
+	//reserved-memory {
 
 		// reserved0: memory@0x30000000 {
 		// 	reg = <0 0x30000000 0 0x8000000>;
 		// 	no-map;
 		// };
-	};
+	//};
 
 	ahb {
 		compatible = "simple-bus";
@@ -55,6 +53,13 @@
 		// 	interrupts = <&vic0 7 IRQ_EDGE_RISING>; // INT_TIMER32 is the actual interrupt, TIMERF is the one used for rockbox.
 		// 	clock-frequency = <12000000>;
 		// };
+
+		uart_0: serial@0x3CC00000 {
+			compatible = "samsung,s5l-uart";
+			reg = <0x3CC00000 0x4000>;
+			interrupts = <1 24 0 4>, <1 28 1 4>;
+			status = "disabled";
+		};
 	};
 
 	cpus {

@@ -1,1 +1,1 @@
-obj=$(CONFIG_MACH_S5L8702) += s5l8702.c
+obj-$(CONFIG_MACH_S5L8702) += s5l8702.o
