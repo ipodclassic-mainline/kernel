@@ -9,6 +9,7 @@
 #include <linux/console.h>
 #include <linux/init.h>
 #include <linux/string.h>
+#include <asm/setup.h>
 
 extern void printascii(const char *);
 
@@ -39,6 +40,7 @@ static struct console early_console_dev = {
 
 static int __init setup_early_printk(char *buf)
 {
+	early_print("We have early_printk!!!!!!!!!\n");
 	early_console = &early_console_dev;
 	register_console(&early_console_dev);
 	return 0;

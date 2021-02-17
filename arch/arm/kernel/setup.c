@@ -1089,15 +1089,24 @@ void __init setup_arch(char **cmdline_p)
 	if (__atags_pointer)
 		atags_vaddr = FDT_VIRT_BASE(__atags_pointer);
 
+	early_print("Before setup_processor()\n");
 	setup_processor();
+	early_print("After setup_processor()\n");
+
 	if (atags_vaddr) {
+		early_print("Have atags_vaddr\n");
 		mdesc = setup_machine_fdt(atags_vaddr);
-		if (mdesc)
+		early_print("after setup_machine_fdt()\n");
+		if (mdesc) {
+			early_print("Valid mdesc\n");
 			memblock_reserve(__atags_pointer,
 					 fdt_totalsize(atags_vaddr));
+		}
 	}
-	if (!mdesc)
+	if (!mdesc) {
+		early_print("no mdesc, setup_machine_tags()\n");
 		mdesc = setup_machine_tags(atags_vaddr, __machine_arch_type);
+	}
 	if (!mdesc) {
 		early_print("\nError: invalid dtb and unrecognized/unsupported machine ID\n");
 		early_print("  r1=0x%08x, r2=0x%08x\n", __machine_arch_type,
@@ -1107,6 +1116,7 @@ void __init setup_arch(char **cmdline_p)
 		dump_machine_table();
 	}
 
+	early_print("Setup machine_desc\n");
 	machine_desc = mdesc;
 	machine_name = mdesc->name;
 	dump_stack_set_arch_desc("%s", mdesc->name);
@@ -1114,6 +1124,7 @@ void __init setup_arch(char **cmdline_p)
 	if (mdesc->reboot_mode != REBOOT_HARD)
 		reboot_mode = mdesc->reboot_mode;
 
+	early_print("Setup init_mm\n");
 	init_mm.start_code = (unsigned long) _text;
 	init_mm.end_code   = (unsigned long) _etext;
 	init_mm.end_data   = (unsigned long) _edata;
@@ -1123,14 +1134,18 @@ void __init setup_arch(char **cmdline_p)
 	strlcpy(cmd_line, boot_command_line, COMMAND_LINE_SIZE);
 	*cmdline_p = cmd_line;
 
+	early_print("early_fixmap_init()\n");
 	early_fixmap_init();
 	early_ioremap_init();
 
+	early_print("parse_early_param()\n");
 	parse_early_param();
 
 #ifdef CONFIG_MMU
+	early_print("early_mm_init()\n");
 	early_mm_init(mdesc);
 #endif
+	early_print("setup_dma_zone()\n");
 	setup_dma_zone(mdesc);
 	xen_early_init();
 	efi_init();
@@ -1138,22 +1153,30 @@ void __init setup_arch(char **cmdline_p)
 	 * Make sure the calculation for lowmem/highmem is set appropriately
 	 * before reserving/allocating any memory
 	 */
+	early_print("adjust_lowmem_bounds()\n");
 	adjust_lowmem_bounds();
+	early_print("arm_memblock_init()\n");
 	arm_memblock_init(mdesc);
 	/* Memory may have been removed so recalculate the bounds. */
+	early_print("adjust_lowmem_bounds()\n");
 	adjust_lowmem_bounds();
 
+	early_print("early_ioremap_reset()\n");
 	early_ioremap_reset();
 
+	early_print("paging_init()\n");
 	paging_init(mdesc);
+	early_print("kasan_init()\n");
 	kasan_init();
 	request_standard_resources(mdesc);
 
 	if (mdesc->restart)
 		arm_pm_restart = mdesc->restart;
 
+	early_print("unflatten_device_tree()\n");
 	unflatten_device_tree();
 
+	early_print("arm_dt_init_cpu_maps()\n");
 	arm_dt_init_cpu_maps();
 	psci_dt_init();
 #ifdef CONFIG_SMP
@@ -1171,7 +1194,7 @@ void __init setup_arch(char **cmdline_p)
 
 	if (!is_smp())
 		hyp_mode_check();
-
+	early_print("reserve_crashkernel()\n");
 	reserve_crashkernel();
 
 #ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
