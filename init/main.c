@@ -882,7 +882,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	pr_alert("aaaaaaaaaaaaa");
 	early_print("smp_prepare_boot_cpu()\n");
 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
-	early_print("boot_cpu_hotplug_init()");
+	early_print("boot_cpu_hotplug_init()\n");
 	boot_cpu_hotplug_init();
 
 	build_all_zonelists(NULL);
@@ -903,6 +903,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 		parse_args("Setting extra init args", extra_init_args,
 			   NULL, 0, -1, -1, NULL, set_init_arg);
 
+	early_print("setup_log_buf()\n");
 	/*
 	 * These use large bootmem allocations and must precede
 	 * kmem_cache_init()
@@ -911,10 +912,13 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	vfs_caches_init_early();
 	sort_main_extable();
 	trap_init();
+	early_print("mm_init()\n");
 	mm_init();
 
+	early_print("ftrace_init()\n");
 	ftrace_init();
 
+	early_print("early_trace_init()\n");
 	/* trace_printk can be enabled here */
 	early_trace_init();
 
@@ -923,6 +927,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	 * timer interrupt). Full topology setup happens at smp_init()
 	 * time - but meanwhile we still have a functioning scheduler.
 	 */
+	early_print("sched_init()\n");
 	sched_init();
 	/*
 	 * Disable preemption - early bootup scheduling is extremely
@@ -950,6 +955,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	rcu_init();
 
 	/* Trace events are available after this */
+	early_print("trace_init()\n");
 	trace_init();
 
 	if (initcall_debug)
@@ -957,10 +963,15 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 
 	context_tracking_init();
 	/* init some links before init_ISA_irqs() */
+	early_print("early_irq_init()\n");
 	early_irq_init();
+	early_print("init_IRQ()\n");
 	init_IRQ();
+	early_print("tick_init()\n");
 	tick_init();
+	early_print("rcu_init_nohz()\n");
 	rcu_init_nohz();
+	early_print("init_timers()\n");
 	init_timers();
 	hrtimers_init();
 	softirq_init();
