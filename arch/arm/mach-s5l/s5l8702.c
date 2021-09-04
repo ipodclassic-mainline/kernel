@@ -34,14 +34,14 @@ static struct map_desc s5l8702_io_desc[] __initdata = {
 	},
 };
 
-extern void early_console_write(struct console *con, const char *s, unsigned n);
+// extern void early_console_write(struct console *con, const char *s, unsigned n);
 
-static struct console early_console_dev = {
-	.name =		"earlycon",
-	.write =	early_console_write,
-	.flags =	CON_PRINTBUFFER | CON_BOOT,
-	.index =	-1,
-};
+// static struct console early_console_dev = {
+// 	.name =		"earlycon",
+// 	.write =	early_console_write,
+// 	.flags =	CON_PRINTBUFFER | CON_BOOT,
+// 	.index =	-1,
+// };
 
 void __init s5l8702_map_io(void)
 {
@@ -61,7 +61,7 @@ static const char * const s5l8702_dt_compat[] = {
 	NULL,
 };
 
-DT_MACHINE_START(S5L8702, "Samsung S5L8702 iPod Classic (6th Gen)")
+DT_MACHINE_START(S5L8702, "S5L8702 Apple iPod Classic (6th Gen)")
 	 .init_machine	= s5l8702_dt_init,
 	 .map_io = s5l8702_map_io,
 	// .init_irq = irqchip_init,

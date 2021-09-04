@@ -32,19 +32,19 @@
 
 		vic0: interrupt-controller@38e00000 {
 			compatible = "arm,pl190-vic";
-			reg = <0x38E00F00 0x1000>;
+			reg = <0x38E00000 0x1000>;
 
 			interrupt-controller;
 			#interrupt-cells = <1>;
 		};
 
-		vic1: interrupt-controller@38e01000 {
-			compatible = "arm,pl190-vic";
-			reg = <0x38E01F00 0x1000>;
+		// vic1: interrupt-controller@38e01000 {
+		// 	compatible = "arm,pl190-vic";
+		// 	reg = <0x38E01F00 0x1000>;
 
-			interrupt-controller;
-			#interrupt-cells = <1>;
-		};
+		// 	interrupt-controller;
+		// 	#interrupt-cells = <1>;
+		// };
 	};
 
 	apb {
@@ -61,11 +61,11 @@
 			clocks = <&osc0>;
 			clock-names = "eclk";
 			interrupt-parent = <&vic0>;
-			interrupts = <7>; //, <8 0>;
+			interrupts = <8>; //, <8 0>;
 			status = "okay";
 		};
 
-		uart_0: serial@0x3CC00000 {
+		uart_0: serial@3CC00000 {
 			compatible = "samsung,s5l-uart";
 			reg = <0x3CC00000 0x4000>;
 			interrupt-parent = <&vic0>;

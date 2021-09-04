@@ -554,6 +554,8 @@ void __init reserve_initrd_mem(void)
 	/* Ignore the virtul address computed during device tree parsing */
 	initrd_start = initrd_end = 0;
 
+	pr_info("%s", __func__);
+
 	if (!phys_initrd_size)
 		return;
 	/*
@@ -593,6 +595,7 @@ disable:
 
 void __weak __init free_initrd_mem(unsigned long start, unsigned long end)
 {
+	pr_info("%s", __func__);
 #ifdef CONFIG_ARCH_KEEP_MEMBLOCK
 	unsigned long aligned_start = ALIGN_DOWN(start, PAGE_SIZE);
 	unsigned long aligned_end = ALIGN(end, PAGE_SIZE);
@@ -641,6 +644,8 @@ static void __init populate_initrd_image(char *err)
 	struct file *file;
 	loff_t pos = 0;
 
+	pr_info("%s", __func__);
+
 	unpack_to_rootfs(__initramfs_start, __initramfs_size);
 
 	printk(KERN_INFO "rootfs image is not initramfs (%s); looks like an initrd\n",
@@ -660,6 +665,7 @@ static void __init populate_initrd_image(char *err)
 
 static int __init populate_rootfs(void)
 {
+	pr_info("%s", __func__);
 	/* Load the built in initramfs */
 	char *err = unpack_to_rootfs(__initramfs_start, __initramfs_size);
 	if (err)

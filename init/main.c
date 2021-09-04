@@ -951,8 +951,10 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 
 	context_tracking_init();
 	/* init some links before init_ISA_irqs() */
+	pr_info("early_irq_init()");
 	early_irq_init();
 	init_IRQ();
+	pr_info("tick_init()");
 	tick_init();
 	rcu_init_nohz();
 	init_timers();
@@ -969,6 +971,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	 * - add_latent_entropy() to get any latent entropy
 	 * - adding command line entropy
 	 */
+	pr_info("rand_initialize()");
 	rand_initialize();
 	add_latent_entropy();
 	add_device_randomness(command_line, strlen(command_line));
@@ -981,8 +984,10 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	WARN(!irqs_disabled(), "Interrupts were enabled early\n");
 
 	early_boot_irqs_disabled = false;
+	pr_info("local_irq_enable()");
 	local_irq_enable();
 
+	pr_info("kmem_cache_init_late()");
 	kmem_cache_init_late();
 
 	/*
@@ -990,11 +995,12 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	 * we've done PCI setups etc, and console_init() must be aware of
 	 * this. But we do want output early, in case something goes wrong.
 	 */
+	pr_info("console_init()");
 	console_init();
 	if (panic_later)
 		panic("Too many boot %s vars at `%s'", panic_later,
 		      panic_param);
-
+	pr_info("lockdep_init()");
 	lockdep_init();
 
 	/*
@@ -1002,6 +1008,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	 * to self-test [hard/soft]-irqs on/off lock inversion bugs
 	 * too:
 	 */
+	pr_info("locking_selftest()");
 	locking_selftest();
 
 	/*
@@ -1021,6 +1028,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 		initrd_start = 0;
 	}
 #endif
+	pr_info("setup_per_cpu_pageset()");
 	setup_per_cpu_pageset();
 	numa_policy_init();
 	acpi_early_init();
@@ -1034,6 +1042,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	if (efi_enabled(EFI_RUNTIME_SERVICES))
 		efi_enter_virtual_mode();
 #endif
+	pr_info("thread_stack_cache_init()");
 	thread_stack_cache_init();
 	cred_init();
 	fork_init();
@@ -1061,6 +1070,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	kcsan_init();
 
 	/* Do the rest non-__init'ed, we're now alive */
+	pr_info("arch_call_rest_init()");
 	arch_call_rest_init();
 
 	prevent_tail_call_optimization();

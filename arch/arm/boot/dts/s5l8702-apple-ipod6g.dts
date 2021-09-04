@@ -14,6 +14,6 @@
 	compatible = "samsung,s5l8702", "apple,ipod6g";
 
 	chosen {
-		bootargs = "earlyprintk debug keep_bootcon early_ioremap_debug";
+		bootargs = "earlyprintk debug keep_bootcon early_ioremap_debug init=/sbin/init dynamic_debug.verbose=1 dyndbg='+p' trace_options=sym-addr trace_event=initcall:* tp_printk trace_buf_size=1M ftrace=function ftrace_filter='*'";
 	};
 };

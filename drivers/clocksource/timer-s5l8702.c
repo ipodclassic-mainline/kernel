@@ -25,7 +25,7 @@
 // Controller registers
 #define TSTAT   0x118
 
-// Register offsets (from timer base)
+// Register offsets (from a given timer base) (e.g. TIMER_F is 0xc0 base)
 #define TCON   0x00 // Control / config register
   #define TCON_INT0 BIT(16)
   #define TCON_INT1 BIT(17)
@@ -104,7 +104,7 @@ static struct delay_timer s5l_timer_delay;
 static inline void s5l_timer_write(unsigned int val, struct timer_of *to,
 	struct s5l_timer *timer, unsigned int addr)
 {
-	pr_info("%s: val: 0x%x -> addr: 0x%px", __func__, val, timer_of_base(to) + timer->reg_offset + addr);
+	pr_debug("%s: val: 0x%x -> addr: 0x%px", __func__, val, timer_of_base(to) + timer->reg_offset + addr);
 	writel_relaxed(val, timer_of_base(to) + timer->reg_offset + addr);
 }
 
@@ -115,7 +115,7 @@ static inline unsigned int s5l_timer_read(struct timer_of *to, struct s5l_timer 
 
 static unsigned long notrace s5l_read_sched_clock(void)
 {
-	return readl_relaxed(&s5l_timer_cnt);
+	return readl_relaxed(s5l_timer_cnt);
 }
 
 static unsigned long s5l_read_delay(void)
@@ -156,7 +156,7 @@ static void s5l_timer_reset(struct timer_of *to, struct s5l_timer *timer)
 	tcon |= (0 << 11);
 	tcon |= timer->mode_sel;
 
-	pr_info("%s: Resetting timer: '%s', tcon: 0x%x\n", __func__, timer->name, tcon);
+	pr_debug("%s: Resetting timer: '%s', tcon: 0x%x\n", __func__, timer->name, tcon);
 
 	s5l_timer_write(tcon, to, timer, TCON);
 
@@ -174,16 +174,8 @@ static int s5l_clock_event_set_next_event(unsigned long evt,
 	s5l_timer_write(evt, to, s5l_timer_clkevt, TDATA0);
 	now = s5l_timer_read(to, s5l_timer_clkevt, TCNT);
 
-	pr_info("%s: timer '%s', evt: %d, now: %d\n", __func__,
+	pr_debug("%s: timer '%s', evt: %d, now: %lu\n", __func__,
 		s5l_timer_clkevt->name, evt, now);
-	
-	pr_info("%d", s5l_timer_read(to, s5l_timer_clkevt, TCNT));
-	udelay(10);
-	pr_info("%d", s5l_timer_read(to, s5l_timer_clkevt, TCNT));
-	udelay(10);
-	pr_info("%d", s5l_timer_read(to, s5l_timer_clkevt, TCNT));
-	udelay(10);
-	pr_info("%d", s5l_timer_read(to, s5l_timer_clkevt, TCNT));
 
 	return 0;
 }
@@ -195,7 +187,7 @@ static int s5l_clock_event_set_periodic(struct clock_event_device *clkevt)
 	struct s5l_timer *timer_clkevt = s5l_timer_from_of(to, s5l_timer_clkevt);
 	unsigned int tf_en = s5l_timer_read(to, timer_clkevt, TCMD);
 
-	pr_info("%s: timer: '%s", __func__, timer_clkevt->name);
+	pr_debug("%s: timer: '%s", __func__, timer_clkevt->name);
 
 	s5l_timer_stop(to, timer_clkevt);
 	s5l_timer_reset(to, timer_clkevt);
@@ -214,7 +206,7 @@ static int s5l_clock_event_set_oneshot(struct clock_event_device *clkevt)
 	struct timer_of *to = to_timer_of(clkevt);
 	struct s5l_timer *timer_clkevt = s5l_timer_from_of(to, s5l_timer_clkevt);
 
-	pr_info("%s: timer: '%s", __func__, timer_clkevt->name);
+	pr_debug("%s: timer: '%s", __func__, timer_clkevt->name);
 
 	s5l_timer_start(to, timer_clkevt);
 
@@ -241,12 +233,12 @@ static irqreturn_t s5l_clock_event_handler(int irq, void *dev_id)
 	struct timer_of *to = to_timer_of(clkevt);
 	struct s5l_timer_private *pd = to->private_data;
 
-	pr_info("%s: TSTAT = 0x%x\n", __func__, readl_relaxed(timer_of_base(to) + TSTAT));
+	pr_debug("%s: TSTAT = 0x%x\n", __func__, readl_relaxed(timer_of_base(to) + TSTAT));
 
 	writel_relaxed((0x07 << 16), timer_of_base(to) + TSTAT);
 
 	if (clockevent_state_periodic(clkevt))
-		s5l_clock_event_set_periodic(clkevt);
+		s5l_clock_event_set_next_event(timer_of_period(to), clkevt);
 	else
 		s5l_clock_event_shutdown(clkevt);
 
@@ -264,12 +256,10 @@ static int __init s5l_clocksource_init(struct timer_of *to)
 	ret = clocksource_mmio_init(s5l_timer_cnt, name,
 				     ECLK, 300,
 				     32, clocksource_mmio_readl_up);
-	pr_info("%s:  clocksource_mmio_init called\n", name);
 
 	s5l_timer_delay.read_current_timer = s5l_read_delay;
 	s5l_timer_delay.freq = ECLK;
 	register_current_timer_delay(&s5l_timer_delay);
-	pr_info("%s: s5l delay timer registered\n", name);
 
 	return ret;
 }
@@ -340,7 +330,7 @@ int __init s5l_timer_init(struct device_node *node)
 	// Address of timer E which the bootloader configured for us
 	s5l_timer_cnt = timer_of_base(to) + TIMER_E_CNT;
 
-	pr_info("%s: counter %px has val %d", __func__, s5l_timer_cnt, *s5l_timer_cnt);
+	// pr_info("%s: counter %px has val %d", __func__, s5l_timer_cnt, *s5l_timer_cnt);
 
 	ret = s5l_clocksource_init(to);
 	if (ret)

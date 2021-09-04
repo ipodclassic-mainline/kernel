@@ -1429,7 +1429,6 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
 	/* Reserve fixed i/o space in VMALLOC region */
 	pci_reserve_io();
 
-	early_print("local_flush_tlb_all() DISABLED, GETS STUCK\n");
 	/*
 	 * Finally flush the caches and tlb to ensure that we're in a
 	 * consistent state wrt the writebuffer.  This also ensures that

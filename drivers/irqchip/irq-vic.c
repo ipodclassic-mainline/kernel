@@ -446,7 +446,7 @@ static void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
 		cellid |= (readl(addr) & 0xff) << (8 * i);
 	}
 	vendor = (cellid >> 12) & 0xff;
-	printk(KERN_INFO "VIC @%p: id 0x%08x, vendor 0x%02x\n",
+	printk(KERN_INFO "VIC @%px: id 0x%08x, vendor 0x%02x\n",
 	       base, cellid, vendor);
 
 	switch(vendor) {

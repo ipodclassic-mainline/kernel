@@ -232,11 +232,11 @@ extern void warn_bogus_irq_restore(void);
 
 #else /* !CONFIG_TRACE_IRQFLAGS */
 
-#define local_irq_enable()	do { raw_local_irq_enable(); } while (0)
-#define local_irq_disable()	do { raw_local_irq_disable(); } while (0)
-#define local_irq_save(flags)	do { raw_local_irq_save(flags); } while (0)
-#define local_irq_restore(flags) do { raw_local_irq_restore(flags); } while (0)
-#define safe_halt()		do { raw_safe_halt(); } while (0)
+#define local_irq_enable()	//raw_local_irq_enable();
+#define local_irq_disable()	//raw_local_irq_disable();
+#define local_irq_save(flags)	//raw_local_irq_save(flags);
+#define local_irq_restore(flags)	//raw_local_irq_restore(flags);
+#define safe_halt()		//raw_safe_halt();
 
 #endif /* CONFIG_TRACE_IRQFLAGS */
 
