@@ -2716,7 +2716,7 @@ void console_start(struct console *console)
 }
 EXPORT_SYMBOL(console_start);
 
-static int __read_mostly keep_bootcon;
+static int __read_mostly keep_bootcon = 1;
 
 static int __init keep_bootcon_setup(char *str)
 {
@@ -2927,7 +2927,7 @@ void register_console(struct console *newcon)
 	pr_info("%sconsole [%s%d] enabled\n",
 		(newcon->flags & CON_BOOT) ? "boot" : "" ,
 		newcon->name, newcon->index);
-	if (bcon &&
+	if (false || bcon &&
 	    ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV) &&
 	    !keep_bootcon) {
 		/* We need to iterate through all boot consoles, to make

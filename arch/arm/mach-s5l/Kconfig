@@ -3,6 +3,7 @@ menuconfig ARCH_S5L
 	bool "Samsung / Apple iPod SoCs (S5L)"
 	depends on ARCH_MULTI_V5
 	select CLKSRC_MMIO
+	select S5L_TIMER
 	select PINCTRL
 	select SOC_BUS
 	select GPIOLIB

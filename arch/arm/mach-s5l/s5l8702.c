@@ -22,6 +22,7 @@
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/setup.h>
+#include <linux/console.h>
 #include "s5l8702.h"
 
 static struct map_desc s5l8702_io_desc[] __initdata = {
@@ -33,22 +34,27 @@ static struct map_desc s5l8702_io_desc[] __initdata = {
 	},
 };
 
+extern void early_console_write(struct console *con, const char *s, unsigned n);
+
+static struct console early_console_dev = {
+	.name =		"earlycon",
+	.write =	early_console_write,
+	.flags =	CON_PRINTBUFFER | CON_BOOT,
+	.index =	-1,
+};
+
 void __init s5l8702_map_io(void)
 {
-	early_print("s5l8702_map_io()\n");
 	iotable_init(s5l8702_io_desc, ARRAY_SIZE(s5l8702_io_desc));
+	// early_console = &early_console_dev;
+	// register_console(&early_console_dev);
 }
 
 static void __init s5l8702_dt_init(void)
 {
-	early_print("Holy balls it's DT init\n");
 	of_platform_populate(NULL, of_default_bus_match_table,
 	NULL, NULL);
 }
-
-// struct sys_timer s5l8702_timer = {
-// 	.init = s5l8702_timer_init,
-// };
 
 static const char * const s5l8702_dt_compat[] = {
 	"samsung,s5l8702",
@@ -56,9 +62,8 @@ static const char * const s5l8702_dt_compat[] = {
 };
 
 DT_MACHINE_START(S5L8702, "Samsung S5L8702 iPod Classic (6th Gen)")
-	.init_machine	= s5l8702_dt_init,
-	.map_io = s5l8702_map_io,
-	.init_irq = irqchip_init,
-	//.timer = &s5l8702_timer
+	 .init_machine	= s5l8702_dt_init,
+	 .map_io = s5l8702_map_io,
+	// .init_irq = irqchip_init,
 	.dt_compat = s5l8702_dt_compat,
 MACHINE_END

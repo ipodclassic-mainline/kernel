@@ -12,9 +12,8 @@
 / {
 	model = "Apple iPod classic (6th Gen)";
 	compatible = "samsung,s5l8702", "apple,ipod6g";
-	//bootargs = "earlyprintk debug keep_bootcon early_ioremap_debug";
-};
 
-&uart_0 {
-	status = "okay";
+	chosen {
+		bootargs = "earlyprintk debug keep_bootcon early_ioremap_debug";
+	};
 };

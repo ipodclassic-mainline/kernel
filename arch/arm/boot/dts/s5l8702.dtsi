@@ -45,18 +45,30 @@
 			interrupt-controller;
 			#interrupt-cells = <1>;
 		};
+	};
 
-		// timer@3c700000 {
-		// 	compatible = "samsung,s5l8702-timer";
-		// 	reg = <0x3C700000 0x200>;
+	apb {
+		compatible = "simple-bus";
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
 
-		// 	interrupts = <&vic0 7 IRQ_EDGE_RISING>; // INT_TIMER32 is the actual interrupt, TIMERF is the one used for rockbox.
-		// 	clock-frequency = <12000000>;
-		// };
+		timers: timer@3C700000 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			compatible = "samsung,s5l-timers";
+			reg = <0x3C700000 0x400>;
+			clocks = <&osc0>;
+			clock-names = "eclk";
+			interrupt-parent = <&vic0>;
+			interrupts = <7>; //, <8 0>;
+			status = "okay";
+		};
 
 		uart_0: serial@0x3CC00000 {
 			compatible = "samsung,s5l-uart";
 			reg = <0x3CC00000 0x4000>;
+			interrupt-parent = <&vic0>;
 			interrupts = <1 24 0 4>, <1 28 1 4>;
 			status = "disabled";
 		};
@@ -78,7 +90,7 @@
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
 
-			clock-output-names = "osc0";
+			clock-output-names = "eclk";
 			clock-frequency = <12000000>;
 		};
 
@@ -86,7 +98,7 @@
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
 
-			clock-output-names = "osc1";
+			clock-output-names = "pclk";
 			clock-frequency = <32768>;
 		};
 	};

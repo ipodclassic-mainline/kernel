@@ -11,6 +11,9 @@
 		.endm
 
 		.macro	waituarttxrdy,rd,rx
+1002:		ldr	\rd, [\rx, #UC870X_STAT]	@ STAT
+		tst	\rd, #1 << 1		@ TXEMPTY bit
+		beq	1002b			@ wait until transmit done
 		.endm
 
 		.macro	waituartcts,rd,rx

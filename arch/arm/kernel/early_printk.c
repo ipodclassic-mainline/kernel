@@ -26,7 +26,7 @@ static void early_write(const char *s, unsigned n)
 	}
 }
 
-static void early_console_write(struct console *con, const char *s, unsigned n)
+void early_console_write(struct console *con, const char *s, unsigned n)
 {
 	early_write(s, n);
 }

@@ -91,6 +91,14 @@ config ROCKCHIP_TIMER
 	help
 	  Enables the support for the Rockchip timer driver.
 
+config S5L_TIMER
+	bool "S5L8702 timer driver" if COMPILE_TEST
+	depends on ARCH_S5L
+	select TIMER_OF
+	select CLKSRC_MMIO
+	help
+	  Enables support for the Samsung S5L8702 SoC timer driver.
+
 config ARMADA_370_XP_TIMER
 	bool "Armada 370 and XP timer driver" if COMPILE_TEST
 	depends on ARM

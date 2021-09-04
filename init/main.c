@@ -872,17 +872,11 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
 	pr_notice("%s", linux_banner);
 	early_security_init();
 	setup_arch(&command_line);
-	early_print("setup_boot_config()\n");
 	setup_boot_config(command_line);
 	setup_command_line(command_line);
-	early_print("setup_nr_cpu_ids()\n");
 	setup_nr_cpu_ids();
-	early_print("setup_per_cpu_areas()\n");
 	setup_per_cpu_areas();
-	pr_alert("aaaaaaaaaaaaa");
-	early_print("smp_prepare_boot_cpu()\n");
 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
-	early_print("boot_cpu_hotplug_init()");
 	boot_cpu_hotplug_init();
 
 	build_all_zonelists(NULL);
