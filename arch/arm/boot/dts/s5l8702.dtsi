@@ -1,0 +1,96 @@
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+
+/ {
+	compatible = "samsung,s5l8702";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	memory@8000000 {
+		device_type = "memory";
+		reg = <0x08000000 0x4000000>;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			compatible = "arm,arm926ej-s";
+			device_type = "cpu";
+			reg = <0x0>;
+		};
+	};
+
+	ahb {
+		compatible = "simple-bus";
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		vic0: interrupt-controller@38e00000 {
+			compatible = "arm,pl190-vic";
+			reg = <0x38E00000 0x1000>;
+
+			interrupt-controller;
+			#interrupt-cells = <1>;
+		};
+
+		vic1: interrupt-controller@38e01000 {
+			compatible = "arm,pl190-vic";
+			reg = <0x38E01000 0x1000>;
+
+			interrupt-controller;
+			#interrupt-cells = <1>;
+		};
+	};
+
+	apb {
+		compatible = "simple-bus";
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		timer: timer@3C700000 {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			compatible = "samsung,s5l-timer";
+			reg = <0x3C700000 0x400>;
+			clocks = <&osc0>;
+			clock-names = "eclk";
+			interrupt-parent = <&vic0>;
+			interrupts = <8>; //, <8 0>;
+			status = "okay";
+		};
+
+		uart0: serial@3CC00000 {
+			compatible = "apple,s5l-uart";
+			reg = <0x3CC00000 0x1000>;
+			interrupt-parent = <&vic0>;
+			interrupts = <24>;
+
+			clocks = <&osc0>;
+			clock-names = "uart";
+			//samsung,uart-fifosize = <16>;
+			status = "okay";
+		};
+	};
+
+	clocks {
+		osc0: clk-osc0 {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+
+			clock-output-names = "eclk";
+			clock-frequency = <12000000>;
+		};
+
+		osc1: clk-osc1 {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+
+			clock-output-names = "pclk";
+			clock-frequency = <32768>;
+		};
+	};
+};
