@@ -1100,14 +1100,19 @@ void __init setup_arch(char **cmdline_p)
 		atags_vaddr = FDT_VIRT_BASE(__atags_pointer);
 
 	setup_processor();
+
 	if (atags_vaddr) {
+
 		mdesc = setup_machine_fdt(atags_vaddr);
-		if (mdesc)
+
+		if (mdesc) {
 			memblock_reserve(__atags_pointer,
 					 fdt_totalsize(atags_vaddr));
+		}
 	}
-	if (!mdesc)
+	if (!mdesc) {
 		mdesc = setup_machine_tags(atags_vaddr, __machine_arch_type);
+	}
 	if (!mdesc) {
 		early_print("\nError: invalid dtb and unrecognized/unsupported machine ID\n");
 		early_print("  r1=0x%08x, r2=0x%08x\n", __machine_arch_type,
@@ -1117,6 +1122,7 @@ void __init setup_arch(char **cmdline_p)
 		dump_machine_table();
 	}
 
+	early_print("Setup machine_desc\n");
 	machine_desc = mdesc;
 	machine_name = mdesc->name;
 	dump_stack_set_arch_desc("%s", mdesc->name);
@@ -1124,11 +1130,13 @@ void __init setup_arch(char **cmdline_p)
 	if (mdesc->reboot_mode != REBOOT_HARD)
 		reboot_mode = mdesc->reboot_mode;
 
+	early_print("Setup init_mm\n");
 	setup_initial_init_mm(_text, _etext, _edata, _end);
 
 	/* populate cmd_line too for later use, preserving boot_command_line */
 	strlcpy(cmd_line, boot_command_line, COMMAND_LINE_SIZE);
 	*cmdline_p = cmd_line;
+
 
 	early_fixmap_init();
 	early_ioremap_init();
@@ -1180,7 +1188,6 @@ void __init setup_arch(char **cmdline_p)
 
 	if (!is_smp())
 		hyp_mode_check();
-
 	reserve_crashkernel();
 
 #ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER

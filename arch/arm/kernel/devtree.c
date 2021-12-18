@@ -203,10 +203,16 @@ const struct machine_desc * __init setup_machine_fdt(void *dt_virt)
 	mdesc_best = &__mach_desc_GENERIC_DT;
 #endif
 
+	early_print("Before early_init_dt_verify()\n");
+
 	if (!dt_virt || !early_init_dt_verify(dt_virt))
 		return NULL;
+	
+	early_print("Have valid DT!\n");
 
 	mdesc = of_flat_dt_match_machine(mdesc_best, arch_get_next_mach);
+
+	early_print("We are mdesc->name = %s\n", mdesc->name);
 
 	if (!mdesc) {
 		const char *prop;
