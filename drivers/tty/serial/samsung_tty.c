@@ -2633,6 +2633,33 @@ static struct console s3c24xx_serial_console = {
 };
 #endif /* CONFIG_SERIAL_SAMSUNG_CONSOLE */
 
+#ifdef CONFIG_MACH_S5L8702
+static struct s3c24xx_serial_drv_data s5l8702_serial_drv_data = {
+	.info = &(struct s3c24xx_uart_info) {
+		.name		= "Samsung S5L8702 UART",
+		.type		= PORT_S3C2410,
+		.fifosize	= 16,
+		.rx_fifomask	= S3C2410_UFSTAT_RXMASK,
+		.rx_fifoshift	= S3C2410_UFSTAT_RXSHIFT,
+		.rx_fifofull	= S3C2410_UFSTAT_RXFULL,
+		.tx_fifofull	= S3C2410_UFSTAT_TXFULL,
+		.tx_fifomask	= S3C2410_UFSTAT_TXMASK,
+		.tx_fifoshift	= S3C2410_UFSTAT_TXSHIFT,
+		.def_clk_sel	= S3C2410_UCON_CLKSEL0,
+		.num_clks	= 1,
+		.clksel_mask	= S3C2410_UCON_CLKMASK,
+		.clksel_shift	= S3C2410_UCON_CLKSHIFT,
+	},
+	.def_cfg = &(struct s3c2410_uartcfg) {
+		.ucon		= S3C2410_UCON_DEFAULT,
+		.ufcon		= S3C2410_UFCON_DEFAULT,
+	},
+};
+#define S5L870_SERIAL_DRV_DATA ((kernel_ulong_t)&s5l8702_serial_drv_data)
+#else
+#define S5L870_SERIAL_DRV_DATA (kernel_ulong_t)NULL
+#endif
+
 #ifdef CONFIG_CPU_S3C2410
 static struct s3c24xx_serial_drv_data s3c2410_serial_drv_data = {
 	.info = &(struct s3c24xx_uart_info) {
@@ -2885,6 +2912,9 @@ static const struct platform_device_id s3c24xx_serial_driver_ids[] = {
 	}, {
 		.name		= "exynos850-uart",
 		.driver_data	= EXYNOS850_SERIAL_DRV_DATA,
+	}, {
+		.name		= "s5l8702-uart",
+		.driver_data	= S5L870_SERIAL_DRV_DATA,
 	},
 	{ },
 };
@@ -2910,6 +2940,8 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
 		.data = (void *)S5L_SERIAL_DRV_DATA },
 	{ .compatible = "samsung,exynos850-uart",
 		.data = (void *)EXYNOS850_SERIAL_DRV_DATA },
+	{ .compatible = "samsung,s5l8702-uart",
+		.data = (void *)S5L870_SERIAL_DRV_DATA },
 	{},
 };
 MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
