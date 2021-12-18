@@ -1726,8 +1726,11 @@ void __init paging_init(const struct machine_desc *mdesc)
 	pr_debug("physical kernel sections: 0x%08llx-0x%08llx\n",
 		 kernel_sec_start, kernel_sec_end);
 
+	early_print("prepare_page_table()\n");
 	prepare_page_table();
+	early_print("map_lowmem()\n");
 	map_lowmem();
+	early_print("memblock_set_current_limit(%x)\n", arm_lowmem_limit);
 	memblock_set_current_limit(arm_lowmem_limit);
 	pr_debug("lowmem limit is %08llx\n", (long long)arm_lowmem_limit);
 	/*
@@ -1735,9 +1738,13 @@ void __init paging_init(const struct machine_desc *mdesc)
 	 * be used
 	 */
 	map_kernel();
+	early_print("dma_contiguous_remap()\n");
 	dma_contiguous_remap();
+	early_print("early_fixmap_shutdown()\n");
 	early_fixmap_shutdown();
+	early_print("devicemaps_init()\n");
 	devicemaps_init(mdesc);
+	early_print("kmap_init()\n");
 	kmap_init();
 	tcm_init();
 

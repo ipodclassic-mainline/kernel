@@ -19,6 +19,7 @@
 #define IRQMASK_I_BIT	PSR_I_BIT
 #endif
 
+// ipod6g needs this to be disabled ???
 #if __LINUX_ARM_ARCH__ >= 6
 
 #define arch_local_irq_save arch_local_irq_save
