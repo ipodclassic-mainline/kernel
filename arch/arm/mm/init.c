@@ -182,6 +182,7 @@ void check_cpu_icache_size(int cpuid)
 
 void __init arm_memblock_init(const struct machine_desc *mdesc)
 {
+	pr_info("%s", __func__);
 	/* Register the kernel text, kernel data and initrd with memblock. */
 	memblock_reserve(__pa(KERNEL_START), KERNEL_END - KERNEL_START);
 
@@ -481,6 +482,7 @@ void free_initmem(void)
 #ifdef CONFIG_BLK_DEV_INITRD
 void free_initrd_mem(unsigned long start, unsigned long end)
 {
+	pr_info("%s", __func__);
 	if (start == initrd_start)
 		start = round_down(start, PAGE_SIZE);
 	if (end == initrd_end)

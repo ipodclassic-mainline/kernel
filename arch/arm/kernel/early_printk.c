@@ -9,6 +9,7 @@
 #include <linux/console.h>
 #include <linux/init.h>
 #include <linux/string.h>
+#include <asm/setup.h>
 
 extern void printascii(const char *);
 
