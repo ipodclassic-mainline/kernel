@@ -11,7 +11,15 @@
 		reg = <0x08000000 0x4000000>;
 	};
 
-	aliases {
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			compatible = "arm,arm926ej-s";
+			device_type = "cpu";
+			reg = <0x0>;
+		};
 	};
 
 	ahb {
@@ -43,10 +51,10 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		timers: timer@3C700000 {
+		timer: timer@3C700000 {
 			#address-cells = <1>;
 			#size-cells = <0>;
-			compatible = "samsung,s5l-timers";
+			compatible = "samsung,s5l-timer";
 			reg = <0x3C700000 0x400>;
 			clocks = <&osc0>;
 			clock-names = "eclk";
@@ -57,24 +65,14 @@
 
 		uart0: serial@3CC00000 {
 			compatible = "apple,s5l-uart";
-			reg = <0x3CC00000 0x100>;
+			reg = <0x3CC00000 0x1000>;
 			interrupt-parent = <&vic0>;
 			interrupts = <24>;
 
 			clocks = <&osc0>;
 			clock-names = "uart";
-			samsung,uart-fifosize = <16>;
-		};
-	};
-
-	cpus {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		cpu@0 {
-			compatible = "arm,arm926ej-s";
-			device_type = "cpu";
-			reg = <0x0>;
+			//samsung,uart-fifosize = <16>;
+			status = "okay";
 		};
 	};
 
