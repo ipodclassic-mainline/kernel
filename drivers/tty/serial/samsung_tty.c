@@ -2166,6 +2166,8 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 	int index = probe_index;
 	int ret, prop = 0;
 
+	dev_info(&pdev->dev, "Probing Samsung TTY\n");
+
 	if (np) {
 		ret = of_alias_get_id(np, "serial");
 		if (ret >= 0)
@@ -2198,6 +2200,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 		ourport->port.ops = &s3c64xx_serial_ops;
 		break;
 	case TYPE_APPLE_S5L:
+		dev_info(&pdev->dev, "AAAAAAAPLE S5L!!\n");
 		ourport->port.ops = &apple_s5l_serial_ops;
 		break;
 	}
@@ -2824,7 +2827,7 @@ static const struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
 #define EXYNOS850_SERIAL_DRV_DATA NULL
 #endif
 
-#ifdef CONFIG_ARCH_APPLE
+#if defined(CONFIG_ARCH_APPLE) || defined(CONFIG_ARCH_S5L)
 static const struct s3c24xx_serial_drv_data s5l_serial_drv_data = {
 	.info = {
 		.name		= "Apple S5L UART",
@@ -3132,6 +3135,8 @@ static int __init apple_s5l_early_console_setup(struct earlycon_device *device,
 {
 	/* Close enough to S3C2410 for earlycon... */
 	device->port.private_data = &s3c2410_early_console_data;
+
+	pr_info("Apple S5L UART\n");
 
 #ifdef CONFIG_ARM64
 	/* ... but we need to override the existing fixmap entry as nGnRnE */
