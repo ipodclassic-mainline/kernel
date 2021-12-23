@@ -122,7 +122,9 @@ static inline unsigned int s5l_timer_read(struct timer_of *to, unsigned int addr
 
 static unsigned long notrace s5l_eclk_timer_read(void)
 {
-	return readl_relaxed(s5l_timer_cnt);
+	unsigned int cnt =  readl_relaxed(s5l_timer_cnt);
+	pr_info("%s: cnt: 0x%x", __func__, cnt);
+	return cnt;
 }
 
 static void s5l_timer_start(struct timer_of *to)
@@ -168,6 +170,8 @@ static int s5l_clock_event_set_next_event(unsigned long evt,
 	struct timer_of *to = to_timer_of(clkevt);
 	struct s5l_timer *s5l_timer_clkevt = s5l_timer_from_of(to);
 	unsigned long now;
+
+	evt /= 10;
 
 	// Don't bother supporting the second interval register yet.
 	s5l_timer_write(evt, to, TDATA0);
@@ -317,7 +321,7 @@ int __init s5l_timer_init(struct device_node *node)
 	// Address of timer E which the bootloader configured for us
 	s5l_timer_cnt = timer_of_base(to) + TIMER_E_CNT;
 
-	// pr_info("%s: counter %px has val %d", __func__, s5l_timer_cnt, *s5l_timer_cnt);
+	pr_info("%s: counter %px has val %d", __func__, s5l_timer_cnt, *s5l_timer_cnt);
 
 	ret = s5l_clocksource_init(to);
 	if (ret)
@@ -333,4 +337,4 @@ err:
 	return ret;
 }
 
-TIMER_OF_DECLARE(s5l, "samsung,s5l-timers", s5l_timer_init);
+TIMER_OF_DECLARE(s5l, "samsung,s5l-timer", s5l_timer_init);
