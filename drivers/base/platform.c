@@ -661,6 +661,9 @@ int platform_device_add(struct platform_device *pdev)
 
 	pdev->dev.bus = &platform_bus_type;
 
+	dev_info(&pdev->dev, "Platform device '%s': %s\n", pdev->name,
+		 pdev->dev.driver ? pdev->dev.driver->name : "(no driver)");
+
 	switch (pdev->id) {
 	default:
 		dev_set_name(&pdev->dev, "%s.%d", pdev->name,  pdev->id);
@@ -852,6 +855,7 @@ EXPORT_SYMBOL_GPL(platform_device_register_full);
 int __platform_driver_register(struct platform_driver *drv,
 				struct module *owner)
 {
+	pr_info("%s: driver: '%s'\n", __func__, drv->driver.name);
 	drv->driver.owner = owner;
 	drv->driver.bus = &platform_bus_type;
 
