@@ -70,7 +70,7 @@ static inline u64 notrace cyc_to_ns(u64 cyc, u32 mult, u32 shift)
 
 notrace struct clock_read_data *sched_clock_read_begin(unsigned int *seq)
 {
-	*seq = raw_read_seqcount_latch(&cd.seq);
+	*seq = 0; //raw_read_seqcount_latch(&cd.seq);
 	return cd.read_data + (*seq & 1);
 }
 
@@ -109,16 +109,20 @@ unsigned long long notrace sched_clock(void)
 static void update_clock_read_data(struct clock_read_data *rd)
 {
 	/* update the backup (odd) copy with the new data */
+	pr_info("update backup (ns = %lu)\n", rd->epoch_ns);
 	cd.read_data[1] = *rd;
 
-	/* steer readers towards the odd copy */
-	raw_write_seqcount_latch(&cd.seq);
+	// /* steer readers towards the odd copy */
+	pr_info("write_seqcount_latch\n");
+	//raw_write_seqcount_latch(&cd.seq);
 
 	/* now its safe for us to update the normal (even) copy */
+	pr_info("update even (ns = %lu)\n", rd->epoch_ns);
 	cd.read_data[0] = *rd;
 
 	/* switch readers back to the even copy */
-	raw_write_seqcount_latch(&cd.seq);
+	pr_info("write_seqcount_latch\n");
+	//raw_write_seqcount_latch(&cd.seq);
 }
 
 /*
@@ -162,22 +166,27 @@ sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
 		return;
 
 	/* Cannot register a sched_clock with interrupts on */
+	pr_info("before local_irq_save\n");
 	local_irq_save(flags);
 
 	/* Calculate the mult/shift to convert counter ticks to ns. */
+	pr_info("before clocks_calc_mult_shift\n");
 	clocks_calc_mult_shift(&new_mult, &new_shift, rate, NSEC_PER_SEC, 3600);
 
 	new_mask = CLOCKSOURCE_MASK(bits);
 	cd.rate = rate;
 
 	/* Calculate how many nanosecs until we risk wrapping */
+	pr_info("before clocks_calc_max_nsecs\n");
 	wrap = clocks_calc_max_nsecs(new_mult, new_shift, 0, new_mask, NULL);
 	cd.wrap_kt = ns_to_ktime(wrap);
 
 	rd = cd.read_data[0];
 
 	/* Update epoch for new counter and update 'epoch_ns' from old counter*/
+	pr_info("before read\n");
 	new_epoch = read();
+	pr_info("before actual_read_sched_clock\n");
 	cyc = cd.actual_read_sched_clock();
 	ns = rd.epoch_ns + cyc_to_ns((cyc - rd.epoch_cyc) & rd.sched_clock_mask, rd.mult, rd.shift);
 	cd.actual_read_sched_clock = read;
@@ -189,8 +198,10 @@ sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
 	rd.epoch_cyc		= new_epoch;
 	rd.epoch_ns		= ns;
 
+	pr_info("before update_clock_read_data\n");
 	update_clock_read_data(&rd);
 
+	pr_info("sched_clock_timer.function = %px\n", sched_clock_timer.function);
 	if (sched_clock_timer.function != NULL) {
 		/* update timeout for clock wrap */
 		hrtimer_start(&sched_clock_timer, cd.wrap_kt,

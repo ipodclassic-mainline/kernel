@@ -243,7 +243,7 @@ static irqreturn_t s5l_clock_event_handler(int irq, void *dev_id)
 	struct clock_event_device *clkevt = (struct clock_event_device *)dev_id;
 	struct timer_of *to = to_timer_of(clkevt);
 
-	pr_debug("%s: TSTAT = 0x%x\n", __func__, readl_relaxed(timer_of_base(to) + TSTAT));
+	pr_info("%s: TSTAT = 0x%x\n", __func__, readl_relaxed(timer_of_base(to) + TSTAT));
 
 	writel_relaxed((0x07 << 16), timer_of_base(to) + TSTAT);
 
@@ -262,14 +262,17 @@ static int __init s5l_clocksource_init(struct timer_of *to)
 	const char *name = to->np->full_name;
 	int ret;
 
+	pr_info("%s\n", __func__);
 	sched_clock_register((void*)s5l_eclk_timer_read, 32, ECLK);
+	pr_info("done sched_clock_register\n");
 	ret = clocksource_mmio_init(s5l_timer_cnt, name,
 				     ECLK, 300,
 				     32, clocksource_mmio_readl_up);
-
+	pr_info("done clocksource_mmio_init\n");
 	s5l_timer_delay.read_current_timer = s5l_eclk_timer_read;
 	s5l_timer_delay.freq = ECLK;
 	register_current_timer_delay(&s5l_timer_delay);
+	pr_info("done register_current_timer_delay\n");
 
 	return ret;
 }
@@ -331,6 +334,7 @@ int __init s5l_timer_init(struct device_node *node)
 	return 0;
 
 deinit:
+	pr_info("%s: failed to init clocksource\n", __func__);
 	timer_of_cleanup(to);
 err:
 	kfree(to);

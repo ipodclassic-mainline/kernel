@@ -2607,7 +2607,7 @@ static struct console s3c24xx_serial_console = {
 
 #ifdef CONFIG_MACH_S5L8702
 static struct s3c24xx_serial_drv_data s5l8702_serial_drv_data = {
-	.info = &(struct s3c24xx_uart_info) {
+	.info = {
 		.name		= "Samsung S5L8702 UART",
 		.type		= PORT_S3C2410,
 		.fifosize	= 16,
@@ -2622,7 +2622,7 @@ static struct s3c24xx_serial_drv_data s5l8702_serial_drv_data = {
 		.clksel_mask	= S3C2410_UCON_CLKMASK,
 		.clksel_shift	= S3C2410_UCON_CLKSHIFT,
 	},
-	.def_cfg = &(struct s3c2410_uartcfg) {
+	.def_cfg = {
 		.ucon		= S3C2410_UCON_DEFAULT,
 		.ufcon		= S3C2410_UFCON_DEFAULT,
 	},
